@@ -1,0 +1,9 @@
+[mysqld]
+user = mysql
+pid-file = /var/run/mysqld/mysqld.pid
+socket = /var/run/mysqld/mysqld.sock
+datadir = /var/lib/mysql
+port = 3306
+bind-address = 0.0.0.0
+
+max_connections = 100
