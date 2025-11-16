@@ -60,14 +60,14 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ~/data/database
+      device: /home/${USER}/data/database
 
   wordpress_files:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ~/data/wordpress_files
+      device: /home/${USER}/data/wordpress_files
 
 networks:
   all:
