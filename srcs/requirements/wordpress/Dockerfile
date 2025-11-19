@@ -5,10 +5,10 @@ EXPOSE 9000
 ARG PHPPATH=/etc/php/7.4/fpm
 
 RUN apt-get update && \
-	apt-get install -y --no-install-recommends ca-certificates php7.4-fpm php7.4-mysql wget tar && \
+	apt-get install -y --no-install-recommends ca-certificates php7.4-fpm php7.4-mysql wget tar mariadb-client && \
 	rm -rf /var/lib/apt/lists/*
 
-RUN service php7.4-fpm stop || true
+RUN service php7.4-fpm stop
 
 COPY conf/www.conf ${PHPPATH}/pool.d/
 RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' ${PHPPATH}/php.ini || true && \
@@ -19,7 +19,11 @@ RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' ${PHPPATH}/php.ini || tr
 RUN wget --no-check-certificate https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
 	chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
 
-RUN mkdir -p /run/php/ /var/run/php/ /var/www/inception/ && chown -R www-data:www-data /var/www/inception/
+RUN	mkdir -p /run/php/ && \
+	mkdir -p /var/run/php/ && \
+	mkdir -p /var/www/inception/
+
+RUN	chown -R www-data:www-data /var/www/inception/
 
 COPY conf/wp-config.php /tmp/wp-config.php
 COPY tools/setup.sh /bin/

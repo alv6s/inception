@@ -1,74 +1,75 @@
-version: '3.8'
-
 services:
-  mariadb:
-    container_name: mariadb
-    build: ./requirements/mariadb/
-    volumes:
-      - database:/var/lib/mysql/
-    networks:
-      - all
-    init: true
-    restart: on-failure
-    env_file:
-      - .env
+    mariadb:
+        build: ./requirements/mariadb
+        container_name: mariadb
+        networks:
+            - all
+        volumes:
+            - database:/var/lib/mysql
+        restart: unless-stopped
+        env_file:
+            - .env
+        healthcheck:
+            test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
-  wordpress:
-    container_name: wordpress
-    build: ./requirements/wordpress/
-    volumes:
-      - wordpress_files:/var/www/inception/
-    networks:
-      - all
-    init: true
-    restart: on-failure
-    env_file:
-      - .env
-    depends_on:
-      - mariadb
+    wordpress:
+        build: ./requirements/wordpress
+        container_name: wordpress
+        networks:
+            - all
+        volumes:
+            - wordpress_files:/var/www/inception
+        restart: unless-stopped
+        env_file:
+            - .env
+        depends_on:
+            mariadb:
+                condition: service_healthy
 
-  nginx:
-    container_name: nginx
-    build:
-      context: ./requirements/nginx/
-      args:
-        CERT_FOLDER: ${CERT_FOLDER}
-        CERTIFICATE: ${CERTIFICATE}
-        KEY: ${KEY}
-        COUNTRY: ${COUNTRY}
-        STATE: ${STATE}
-        LOCALITY: ${LOCALITY}
-        ORGANIZATION: ${ORGANIZATION}
-        UNIT: ${UNIT}
-        COMMON_NAME: ${COMMON_NAME}
-    ports:
-      - '443:443'
-    volumes:
-      - wordpress_files:/var/www/inception/
-    networks:
-      - all
-    init: true
-    restart: on-failure
-    env_file:
-      - .env
-    depends_on:
-      - wordpress
-
-volumes:
-  database:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/${USER}/data/database
-
-  wordpress_files:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/${USER}/data/wordpress_files
+    nginx:
+        build:
+            context: ./requirements/nginx
+            args:
+                CERT_FOLDER: ${CERT_FOLDER}
+                CERTIFICATE: ${CERTIFICATE}
+                KEY: ${KEY}
+                COUNTRY: ${COUNTRY}
+                STATE: ${STATE}
+                LOCALITY: ${LOCALITY}
+                ORGANIZATION: ${ORGANIZATION}
+                UNIT: ${UNIT}
+                COMMON_NAME: ${COMMON_NAME}
+        container_name: nginx
+        networks:
+            - all
+        ports:
+            - "443:443"
+        volumes:
+            - wordpress_files:/var/www/inception
+        restart: unless-stopped
+        env_file:
+            - .env
+        depends_on:
+            - wordpress
 
 networks:
-  all:
-    driver: bridge
+    all:
+        driver: bridge
+
+volumes:
+    database:
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            device: /home/${USER}/data/database
+    wordpress_files:
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            device: /home/${USER}/data/wordpress_files
