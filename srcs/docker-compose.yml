@@ -15,6 +15,9 @@ services:
             timeout: 5s
             retries: 5
             start_period: 30s
+        secrets:
+            - db_password
+            - db_pass_root
 
     wordpress:
         build: ./requirements/wordpress
@@ -29,6 +32,11 @@ services:
         depends_on:
             mariadb:
                 condition: service_healthy
+        secrets:
+            - db_password
+            - db_pass_root
+            - wp_admin_password
+            - wp_password
 
     nginx:
         build:
@@ -59,6 +67,16 @@ services:
 networks:
     all:
         driver: bridge
+
+secrets:
+    db_password:
+        file: /home/pevieira/data/secrets/db_password
+    db_pass_root:
+        file: /home/pevieira/data/secrets/db_pass_root
+    wp_admin_password:
+        file: /home/pevieira/data/secrets/wp_admin_password
+    wp_password:
+        file: /home/pevieira/data/secrets/wp_password
 
 volumes:
     database:
