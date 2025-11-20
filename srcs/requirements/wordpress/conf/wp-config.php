@@ -1,10 +1,15 @@
 <?php
 define( 'DB_NAME', getenv('DB_NAME'));
 define( 'DB_USER', getenv('DB_USER'));
-define( 'DB_PASSWORD', file_get_contents('/run/secrets/db_password') );
+$db_password = trim(file_get_contents('/run/secrets/db_password'));
+define( 'DB_PASSWORD', $db_password );
 define( 'DB_HOST', getenv('DB_HOST'));
 define( 'WP_HOME', getenv('WP_FULL_URL'));
 define( 'WP_SITEURL', getenv('WP_FULL_URL'));
+
+// Debug password reading
+error_log("WP Debug - DB_PASSWORD length: " . strlen($db_password));
+error_log("WP Debug - DB_PASSWORD (first 4 chars): " . substr($db_password, 0, 4) . "...");
 
 
 // Debug settings for troubleshooting

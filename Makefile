@@ -61,7 +61,7 @@ env:
 	@mkdir -p $(DATA_VOLUME)/secrets
 	@for secret in $(SECRETS); do \
 		if [ ! -f $(DATA_VOLUME)/secrets/$$secret ]; then \
-			openssl rand -base64 12 | head -c 12 > $(DATA_VOLUME)/secrets/$$secret; \
+			openssl rand -hex 6 > $(DATA_VOLUME)/secrets/$$secret; \
 		fi; \
 		printf "%-25s:%s\n" "$$secret" "$$(cat $(DATA_VOLUME)/secrets/$$secret)" | sed 's/ /_/g'; \
 	done
