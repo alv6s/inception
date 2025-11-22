@@ -3,7 +3,7 @@ services:
         build: ./requirements/mariadb
         container_name: mariadb
         networks:
-            - all
+            - inception
         volumes:
             - database:/var/lib/mysql
         restart: unless-stopped
@@ -23,7 +23,7 @@ services:
         build: ./requirements/wordpress
         container_name: wordpress
         networks:
-            - all
+            - inception
         volumes:
             - wordpress_files:/var/www/inception
         restart: unless-stopped
@@ -53,7 +53,7 @@ services:
                 COMMON_NAME: ${COMMON_NAME}
         container_name: nginx
         networks:
-            - all
+            - inception
         ports:
             - "443:443"
         volumes:
@@ -65,7 +65,8 @@ services:
             - wordpress
 
 networks:
-    all:
+    inception:
+        name: inception
         driver: bridge
 
 secrets:

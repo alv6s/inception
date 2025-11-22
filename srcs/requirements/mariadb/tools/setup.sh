@@ -4,9 +4,6 @@ set -e
 DB_PASSWORD="$(cat /run/secrets/db_password)"
 DB_PASS_ROOT="$(cat /run/secrets/db_pass_root)"
 
-echo "Debug - DB_PASSWORD length: $(echo -n "$DB_PASSWORD" | wc -c)"
-echo "Debug - DB_PASSWORD (first 4 chars): $(echo "$DB_PASSWORD" | head -c 4)..."
-
 service mariadb start 
 
 mariadb -v -u root << EOF

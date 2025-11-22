@@ -9,7 +9,7 @@ DB_HOST="${DB_HOST:-mariadb}"
 cp /tmp/wp-config.php /var/www/inception/wp-config.php
 chown -R www-data:www-data /var/www/inception/
 
-# Wait for MariaDB to be ready
+# Wait for MariaDB
 echo "Waiting for MariaDB..."
 until mysql --protocol=TCP -h "${DB_HOST}" -u "${DB_USER}" -p"${DB_PASSWORD}" -e "SELECT 1;" >/dev/null 2>&1; do
     echo "Database not available. Waiting..."
@@ -17,7 +17,7 @@ until mysql --protocol=TCP -h "${DB_HOST}" -u "${DB_USER}" -p"${DB_PASSWORD}" -e
 done
 echo "Database is available!"
 
-# Create database if not exists
+# Create database
 mysql --protocol=TCP -h "${DB_HOST}" -u "${DB_USER}" -p"${DB_PASSWORD}" -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};" 2>/dev/null || echo "Database exists or creation failed"
 
 sleep 2
